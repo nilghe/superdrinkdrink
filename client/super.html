@@ -1,0 +1,38 @@
+<head>
+  <title>super</title>
+</head>
+
+<body>
+	{{> body}}
+</body>
+
+<template name="body">
+	{{#page_is "main"}}
+		{{> main}}
+	{{/page_is}}
+
+	{{#page_is "create"}}
+		{{> create}}
+	{{/page_is}}
+
+	{{#page_is "teams"}}
+		{{> teams}}
+	{{/page_is}}
+
+	{{#page_is "gamedetail"}}
+		{{> gamedetail}}
+	{{/page_is}}
+
+	{{#page_is "results"}}
+		{{> results}}
+	{{/page_is}}
+</template>
+
+<!-- <template name="game">
+	<h3>Game Log</h3>
+	{{#each playerlog}}
+		{{game_name_log}}: {{num_of_players}}<br />
+	{{/each}}
+
+	<h1>{{global_total}}</h1>
+</template>-->
