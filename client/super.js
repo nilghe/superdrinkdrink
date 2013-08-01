@@ -6,8 +6,8 @@ if (Meteor.isClient) {
    * Session Setup
    * *******************/
   Session.set("page", 'main'); //Default page
-  Session.set("teams", null); //Teams Object
-  Session.set("players", []); //Player Object
+  Session.set("teams", []); //Teams Object Array
+  Session.set("players", []); //Player Object Array
   
   Session.set("game_name", null); //Name of the game the user set
   Session.set("team_size", null); //Team sizes
@@ -42,7 +42,7 @@ if (Meteor.isClient) {
   }
 
   Template.create.events({
-    'click .game-button' : function () {
+    'click .create-game' : function () {
       var game = $('#game-name').val();
       var players = $('#num-players').val();
       Session.set("game_name", game);
