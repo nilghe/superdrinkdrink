@@ -29,6 +29,11 @@ if (Meteor.isClient) {
 		CreateGame();
 	});
 
+	//Placing players
+	$('body').on('click', '.team-members li', function(){
+		alert($(this).data("placed"));
+	});
+
 	/* ================================================================================
    	   Game Functions
        ================================================================================*/
@@ -92,6 +97,10 @@ if (Meteor.isClient) {
 			playersArray.push.apply(playersArray, additionalPlayers);
 			return playersArray;
 		}
+		else {
+			return playersArray;
+		}
+
 	}
   });
 }

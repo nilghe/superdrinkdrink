@@ -3,6 +3,18 @@
 	<h1>{{team_size}}</h1>
 
 	<h1>Here are your teams</h1>
+
+	{{#each team}}
+	<div class="team {{teamName}}">
+		<h3>Team {{teamName}}</h3>
+		<ul class="team-members">
+			{{#each teamMembers}}
+			<li data-placed="0">{{playerName}}</li>
+			{{/each}}
+		</ul>
+	</div>
+	{{/each}}
+
 	<div class="back-button" id="create">Back</div>
 	<div class="game-button" id="gamedetail">Play Game</div>
 </template>

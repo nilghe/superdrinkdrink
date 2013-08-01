@@ -71,6 +71,10 @@ if (Meteor.isClient) {
     return Session.get("team_size");
   }
 
+  Template.teams.team = function() {
+    return Session.get("teams");
+  }
+
   /* Gaming Log - NOT USED */
   /* Template.game.playerlog = function(){
     return Players.find();

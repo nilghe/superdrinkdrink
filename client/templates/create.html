@@ -13,11 +13,11 @@
 	<br />
 	Players: <input type="text" id="player" /> <input type="button" id="add-player"value="add" />
 
-	<div class="players-list">
+	<ul class="players-list">
 		{{#each player}}
-			{{playerName}}
+			<li>{{playerName}}</li>
 		{{/each}}
-	</div>
+	</ul>
 
 	<div class="game-button create-game" id="teams">Create game</div>
 </template>
