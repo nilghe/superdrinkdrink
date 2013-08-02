@@ -15,6 +15,19 @@ if (Meteor.isClient) {
 		this.teamName = teamName;
 	}
 
+	var standings = [
+		'1st',
+		'2nd',
+		'3rd',
+		'4th',
+		'5th',
+		'6th',
+		'7th',
+		'8th',
+		'9th',
+		'10th'
+	];
+
 	/* ================================================================================
 	   Dynamic Element Event Binding
 	   ================================================================================*/
@@ -31,7 +44,28 @@ if (Meteor.isClient) {
 
 	//Placing players
 	$('body').on('click', '.team-members li', function(){
-		alert($(this).data("placed"));
+		
+		var standingPlaceholder = $(this).parents('.team').find('.current-standing');
+		var currentStanding = parseInt(standingPlaceholder.val());
+		var playerStanding = $(this).attr('data-placed');
+
+		/* Player standings can be toggled
+		 * If they've been placed, remove their placing, reset placement, and update the standing hidden field
+		 * Standings can only be reset in order they were placed in, Last to first.
+		 * If not place them in the appropriate standing and update standing hidden field */
+		if ($(this).hasClass('placed') && playerStanding == (currentStanding - 1)) {
+			$(this).removeClass('placed');
+			$(this).attr('data-placed', 0);
+			standingPlaceholder.val(currentStanding - 1);
+			$(this).find(".standing-text").html("");
+		}
+		else if (!($(this).hasClass('placed'))) {
+			$(this).addClass('placed');
+			$(this).attr('data-placed', currentStanding);
+			standingPlaceholder.val(currentStanding + 1);
+			$(this).find(".standing-text").html(" " + standings[currentStanding - 1]);
+		}
+
 	});
 
 	/* ================================================================================
