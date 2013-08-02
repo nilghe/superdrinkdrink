@@ -50,21 +50,41 @@ if (Meteor.isClient) {
 		var playerStanding = $(this).attr('data-placed');
 
 		/* Player standings can be toggled
-		 * If they've been placed, remove their placing, reset placement, and update the standing hidden field
-		 * Standings can only be reset in order they were placed in, Last to first.
-		 * If not place them in the appropriate standing and update standing hidden field */
-		if ($(this).hasClass('placed') && playerStanding == (currentStanding - 1)) {
+		 * If they've been placed (have class .placed), remove their placing, reset placement, 
+		 * and update the standing hidden field.
+		 * Standings can only be reset in order they were placed in, Last to first. 
+		 * This is to prevent a nightmare with keeping track of all the rankings.
+		 * 
+		 * If they haven't been placed (don't have class .placed) then put them in 
+		 * the appropriate standing and update standing hidden field. */
+		if ($(this).hasClass('placed') && playerStanding == (currentStanding - 1)) { //Already placed
 			$(this).removeClass('placed');
 			$(this).attr('data-placed', 0);
 			standingPlaceholder.val(currentStanding - 1);
 			$(this).find(".standing-text").html("");
 		}
-		else if (!($(this).hasClass('placed'))) {
+		else if (!($(this).hasClass('placed'))) { //Not yet placed
 			$(this).addClass('placed');
 			$(this).attr('data-placed', currentStanding);
 			standingPlaceholder.val(currentStanding + 1);
 			$(this).find(".standing-text").html(" " + standings[currentStanding - 1]);
 		}
+
+	});
+
+	//Pass out drinks to players in the current game
+	$('body').on('click', '.give-drinks', function(){
+
+		//TODO CLEAN THIS UP AS ITS PRETTY HACKYYYYY
+
+		var teamId = $(this).data('teamid');
+		var teams = Session.get('teams');
+
+		for (var i=0; i < teams[teamId].teamMembers.length; i++) {
+			teams[teamId].teamMembers[i].numDrinks = Math.ceil(Math.random()*100);
+		}
+
+		Session.set('teams', teams);
 
 	});
 
@@ -90,6 +110,12 @@ if (Meteor.isClient) {
 		}
 
 		Session.set("teams", allTeams);
+	}
+
+	function GenerateDrinks() {
+		var first = Math.ceil(Math.random()*4);
+		var second = Math.ceil(Math.random()*3);
+		var everyoneElse = Math.ceil(Math.random()*2);
 	}
 
 	/* ================================================================================

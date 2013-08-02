@@ -10,9 +10,10 @@
 		<input type="hidden" class="current-standing" value="1"/>
 		<ul class="team-members">
 			{{#each teamMembers}}
-			<li data-placed="0">{{playerName}}<span class="standing-text"></span></li>
+			<li data-placed="0">{{playerName}}<span class="standing-text"></span> {{numDrinks}}</li>
 			{{/each}}
 		</ul>
+		<input type="button" class="give-drinks" data-teamid="{{teamName}}" value="DRINK!" />
 	</div>
 	{{/each}}
 
