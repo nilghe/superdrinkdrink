@@ -48,6 +48,9 @@ if (Meteor.isClient) {
 		var standingPlaceholder = $(this).parents('.team').find('.current-standing');
 		var currentStanding = parseInt(standingPlaceholder.val());
 		var playerStanding = $(this).attr('data-placed');
+		var playerId = $(this).data('playerid');
+		//TODO FIX var teamId = $(this).parents('.team').find('.current-standing').data('teamid');
+		var teams = Session.get('teams');
 
 		/* Player standings can be toggled
 		 * If they've been placed (have class .placed), remove their placing, reset placement, 
@@ -62,12 +65,22 @@ if (Meteor.isClient) {
 			$(this).attr('data-placed', 0);
 			standingPlaceholder.val(currentStanding - 1);
 			$(this).find(".standing-text").html("");
+
+			//TODO Move to drink button
+			//Update Player standing in object and session
+			//teams[teamId].teamMembers[playerId].standing = currentStanding;
+			//Session.set('teams', teams);
 		}
 		else if (!($(this).hasClass('placed'))) { //Not yet placed
 			$(this).addClass('placed');
 			$(this).attr('data-placed', currentStanding);
 			standingPlaceholder.val(currentStanding + 1);
 			$(this).find(".standing-text").html(" " + standings[currentStanding - 1]);
+
+			//TODO Move to drink button
+			//Update Player standing in object and session
+			//teams[teamId].teamMembers[playerId].standing = currentStanding;
+			//Session.set('teams', teams);
 		}
 
 	});
@@ -77,10 +90,15 @@ if (Meteor.isClient) {
 
 		//TODO CLEAN THIS UP AS ITS PRETTY HACKYYYYY
 
+		//Update the players in the Teams on the ojbect side to sync with the front
+
 		var teamId = $(this).data('teamid');
 		var teams = Session.get('teams');
 
 		for (var i=0; i < teams[teamId].teamMembers.length; i++) {
+
+			//switch(teams[teamId].teamMembers[i])
+
 			teams[teamId].teamMembers[i].numDrinks = Math.ceil(Math.random()*100);
 		}
 

@@ -11,6 +11,7 @@ if (Meteor.isClient) {
   
   Session.set("game_name", null); //Name of the game the user set
   Session.set("team_size", null); //Team sizes
+  Session.set("player_id", 0); //ID of each individual player. Increments by 1
 
   /* *******************
    * Objects
@@ -21,9 +22,11 @@ if (Meteor.isClient) {
   /* Player 
    * playerName - Name of the player
    * numDrinks - Number of drinks for the player */
-  function playerObj(playerName, numDrinks){
+  function playerObj(id, playerName, numDrinks, standing){
+    this.id = id;
     this.playerName = playerName;
     this.numDrinks = numDrinks;
+    this.standing = standing;
   }
 
   /* *******************
@@ -52,10 +55,12 @@ if (Meteor.isClient) {
     },
 
     'click #add-player' : function () {
-      var singlePlayer = new playerObj($('#player').val(), 0);
+      var playerId = Session.get("player_id");
+      var singlePlayer = new playerObj(playerId, $('#player').val(), 0, 0);
       var currentPlayers = Session.get("players");
       currentPlayers.push(singlePlayer);
       Session.set("players", currentPlayers);
+      Session.set("player_id", playerId + 1);
     }
   });
 

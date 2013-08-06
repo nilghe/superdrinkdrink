@@ -5,12 +5,12 @@
 	<h1>Here are your teams</h1>
 
 	{{#each team}}
-	<div class="team {{teamName}}">
+	<div class="team" data-teamid="{{teamName}}">
 		<h3>Team {{teamName}}</h3>
 		<input type="hidden" class="current-standing" value="1"/>
 		<ul class="team-members">
 			{{#each teamMembers}}
-			<li data-placed="0">{{playerName}}<span class="standing-text"></span> {{numDrinks}}</li>
+			<li data-placed="0" data-playerid="{{id}}">{{playerName}}<span class="standing-text"></span> {{numDrinks}}</li>
 			{{/each}}
 		</ul>
 		<input type="button" class="give-drinks" data-teamid="{{teamName}}" value="DRINK!" />
