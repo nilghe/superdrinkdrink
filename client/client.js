@@ -10,9 +10,10 @@ if (Meteor.isClient) {
 	/* Teams 
 	* playerName - Name of the player
 	* numDrinks - Number of drinks for the player */
-	function teamObj(teamMembers, teamName){
+	function teamObj(teamMembers, teamName, currentStanding){
 		this.teamMembers = teamMembers;
 		this.teamName = teamName;
+		this.currentStanding = currentStanding;
 	}
 
 	var standings = [
@@ -42,45 +43,52 @@ if (Meteor.isClient) {
 		CreateGame();
 	});
 
-	//Placing players
+	//Placing players from first to last. All information is stored in the Teams Object.
 	$('body').on('click', '.team-members li', function(){
 		
-		var standingPlaceholder = $(this).parents('.team').find('.current-standing');
-		var currentStanding = parseInt(standingPlaceholder.val());
-		var playerStanding = $(this).attr('data-placed');
+		var teamId = $(this).parents('.team').data('teamid');
 		var playerId = $(this).data('playerid');
-		//TODO FIX var teamId = $(this).parents('.team').find('.current-standing').data('teamid');
-		var teams = Session.get('teams');
+		
+		var teams = Session.get('teams'); //Create copy of current team list
+		var currentStanding = teams[teamId].currentStanding;
+		var playerStanding = $(this).data('placed');
+		
 
 		/* Player standings can be toggled
-		 * If they've been placed (have class .placed), remove their placing, reset placement, 
-		 * and update the standing hidden field.
+		 * If they've been placed (have class .placed), remove their placing, reset their placement, 
+		 * and update the standing field for the team.
 		 * Standings can only be reset in order they were placed in, Last to first. 
 		 * This is to prevent a nightmare with keeping track of all the rankings.
 		 * 
 		 * If they haven't been placed (don't have class .placed) then put them in 
-		 * the appropriate standing and update standing hidden field. */
+		 * the appropriate standing and update standing team field. */
 		if ($(this).hasClass('placed') && playerStanding == (currentStanding - 1)) { //Already placed
-			$(this).removeClass('placed');
-			$(this).attr('data-placed', 0);
-			standingPlaceholder.val(currentStanding - 1);
-			$(this).find(".standing-text").html("");
 
-			//TODO Move to drink button
-			//Update Player standing in object and session
-			//teams[teamId].teamMembers[playerId].standing = currentStanding;
-			//Session.set('teams', teams);
+			$.each(teams[teamId].teamMembers, function(i, player){
+				if (player.id == playerId) {
+					player.cssClass = '';
+					player.standing = 0;
+					player.standingText = "";
+					teams[teamId].currentStanding = currentStanding - 1;
+
+					Session.set('teams', teams);
+				}
+			});
 		}
 		else if (!($(this).hasClass('placed'))) { //Not yet placed
-			$(this).addClass('placed');
-			$(this).attr('data-placed', currentStanding);
-			standingPlaceholder.val(currentStanding + 1);
-			$(this).find(".standing-text").html(" " + standings[currentStanding - 1]);
 
-			//TODO Move to drink button
-			//Update Player standing in object and session
-			//teams[teamId].teamMembers[playerId].standing = currentStanding;
-			//Session.set('teams', teams);
+			$.each(teams[teamId].teamMembers, function(i, player){
+				if (player.id == playerId) {
+					player.cssClass = 'placed';
+					player.standing = currentStanding;
+					player.standingText = standings[currentStanding - 1];
+					teams[teamId].currentStanding = currentStanding + 1;
+
+					Session.set('teams', teams);
+				}
+			});
+
+
 		}
 
 	});
@@ -88,19 +96,29 @@ if (Meteor.isClient) {
 	//Pass out drinks to players in the current game
 	$('body').on('click', '.give-drinks', function(){
 
-		//TODO CLEAN THIS UP AS ITS PRETTY HACKYYYYY
-
-		//Update the players in the Teams on the ojbect side to sync with the front
-
 		var teamId = $(this).data('teamid');
 		var teams = Session.get('teams');
 
-		for (var i=0; i < teams[teamId].teamMembers.length; i++) {
-
-			//switch(teams[teamId].teamMembers[i])
-
-			teams[teamId].teamMembers[i].numDrinks = Math.ceil(Math.random()*100);
-		}
+		//Hand out drinks
+		$.each(teams[teamId].teamMembers, function(i, player) {
+			switch(player.standing) {
+				case 1:
+					player.numDrinks = Math.ceil(Math.random()*5);
+					console.log("First Place Drinks");
+					break;
+				case 2:
+					player.numDrinks = Math.ceil(Math.random()*4);
+					console.log("Second Place Drinks");
+					break;
+				case 3:
+					player.numDrinks = Math.ceil(Math.random()*3);
+					console.log("Third Place Drinks");
+					break;
+				default:
+					player.numDrinks = Math.ceil(Math.random()*2); 
+					console.log("Everyone Place Drinks");
+			}
+		});
 
 		Session.set('teams', teams);
 
@@ -124,7 +142,7 @@ if (Meteor.isClient) {
 		for (var i=0; i < numOfTeams; i++) {
 			var teamMembers = players.splice(0,teamSize);
 			var teamName = i;
-			allTeams.push(new teamObj(teamMembers, teamName));
+			allTeams.push(new teamObj(teamMembers, teamName, 1));
 		}
 
 		Session.set("teams", allTeams);

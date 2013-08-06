@@ -22,11 +22,13 @@ if (Meteor.isClient) {
   /* Player 
    * playerName - Name of the player
    * numDrinks - Number of drinks for the player */
-  function playerObj(id, playerName, numDrinks, standing){
+  function playerObj(id, playerName, numDrinks, standing, standingText, cssClass){
     this.id = id;
     this.playerName = playerName;
     this.numDrinks = numDrinks;
     this.standing = standing;
+    this.standingText = standingText;
+    this.cssClass = cssClass;
   }
 
   /* *******************
@@ -56,7 +58,7 @@ if (Meteor.isClient) {
 
     'click #add-player' : function () {
       var playerId = Session.get("player_id");
-      var singlePlayer = new playerObj(playerId, $('#player').val(), 0, 0);
+      var singlePlayer = new playerObj(playerId, $('#player').val(), 0, 0, "", "");
       var currentPlayers = Session.get("players");
       currentPlayers.push(singlePlayer);
       Session.set("players", currentPlayers);
