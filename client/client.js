@@ -9,14 +9,16 @@ if (Meteor.isClient) {
 
 	/* Teams 
 	* playerName - Name of the player
-	* numDrinks - Number of drinks for the player */
+	* numDrinks - Number of drinks for the player 
+	* currentStanding - The current standing to be assigned to a player */
 	function teamObj(teamMembers, teamName, currentStanding){
 		this.teamMembers = teamMembers;
 		this.teamName = teamName;
 		this.currentStanding = currentStanding;
 	}
 
-	var standings = [
+	// Conversion array to convert the standing from a number to a word 
+ 	var standings = [
 		'1st',
 		'2nd',
 		'3rd',
@@ -33,17 +35,17 @@ if (Meteor.isClient) {
 	   Dynamic Element Event Binding
 	   ================================================================================*/
 	
-	//Navigation clicks
+	// Navigation clicks
 	$('body').on('click', '.game-button, .back-button', function(){
 		Session.set('page', $(this).attr('id'));
 	});
 
-	//Create the game
+	// Create the game
 	$('body').on('click', '.create-game', function(){
 		CreateGame();
 	});
 
-	//Placing players from first to last. All information is stored in the Teams Object.
+	// Placing players from first to last. All information is stored in the Teams Object.
 	$('body').on('click', '.team-members li', function(){
 		
 		var teamId = $(this).parents('.team').data('teamid');
@@ -93,34 +95,11 @@ if (Meteor.isClient) {
 
 	});
 
-	//Pass out drinks to players in the current game
+	// Pass out drinks to players in the current game
 	$('body').on('click', '.give-drinks', function(){
 
 		var teamId = $(this).data('teamid');
-		var teams = Session.get('teams');
-
-		//Hand out drinks
-		$.each(teams[teamId].teamMembers, function(i, player) {
-			switch(player.standing) {
-				case 1:
-					player.numDrinks = Math.ceil(Math.random()*5);
-					console.log("First Place Drinks");
-					break;
-				case 2:
-					player.numDrinks = Math.ceil(Math.random()*4);
-					console.log("Second Place Drinks");
-					break;
-				case 3:
-					player.numDrinks = Math.ceil(Math.random()*3);
-					console.log("Third Place Drinks");
-					break;
-				default:
-					player.numDrinks = Math.ceil(Math.random()*2); 
-					console.log("Everyone Place Drinks");
-			}
-		});
-
-		Session.set('teams', teams);
+		GenerateDrinks(teamId);
 
 	});
 
@@ -128,6 +107,7 @@ if (Meteor.isClient) {
    	   Game Functions
        ================================================================================*/
 
+    // Take the players and put them into teams thus creating the game
 	function CreateGame() {
 		var players = Session.get("players");
 		var teamSize = Session.get("team_size");
@@ -148,16 +128,25 @@ if (Meteor.isClient) {
 		Session.set("teams", allTeams);
 	}
 
-	function GenerateDrinks() {
-		var first = Math.ceil(Math.random()*4);
-		var second = Math.ceil(Math.random()*3);
-		var everyoneElse = Math.ceil(Math.random()*2);
+	// Generate drinks to hand out to the players
+	// The better they do, the more drinks they get. Why? Cause DRINK!
+	function GenerateDrinks(teamId) {
+		var teams = Session.get('teams');
+
+		//Assign drinks to each player on the current team
+		$.each(teams[teamId].teamMembers, function(i, player) {
+			var maxDrinks = GetMaxDrinks(player.standing);
+			player.numDrinks = Math.ceil(Math.random()*maxDrinks);
+		});
+
+		Session.set('teams', teams);
 	}
 
 	/* ================================================================================
        Helper Functions
        ================================================================================*/
-  	//Uses the fisherYates to randomize the array
+  	
+  	// Uses the fisherYates to randomize the array
 	function randomizeArray (myArray) {
 	  var i = myArray.length;
 	  if ( i == 0 ) return false;
@@ -197,6 +186,28 @@ if (Meteor.isClient) {
 			return playersArray;
 		}
 
+	}
+
+	// Get the max number of drinks a player can possibly get based on their standing
+	function GetMaxDrinks(standing) {
+		
+		var maxDrinks = 0;
+
+		switch(standing) {
+			case 1: //1st
+				maxDrinks = 5;
+				break;
+			case 2: //2nd
+				maxDrinks = 4;
+				break;
+			case 3: //3rd
+				maxDrinks = 3;
+				break;
+			default: //All other places
+				maxDrinks = 2;
+		}
+
+		return maxDrinks;
 	}
   });
 }
