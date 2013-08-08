@@ -98,9 +98,19 @@ if (Meteor.isClient) {
       $.each(teams, function(i, team) {
         $.each(team.teamMembers, function(j, player) {
           player.numDrinks = 0;
-          // player.write();
+          player.standing = 0;
+          player.standingText = "";
+          player.cssClass = "";
         });
       });
+
+      Session.set("teams", teams);
+      Session.set("total_drinks", 0);
+    },
+
+    'click .new-game' : function() { // Reset the game completely
+      Session.set("teams", []);
+      Session.set("players", []);
     }
   });
 
