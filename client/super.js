@@ -11,6 +11,7 @@ if (Meteor.isClient) {
   
   Session.set("game_name", null); //Name of the game the user set
   Session.set("team_size", null); //Team sizes
+  Session.set("total_drinks", 0);
   Session.set("player_id", 0); //ID of each individual player. Increments by 1
 
   /* *******************
@@ -31,6 +32,10 @@ if (Meteor.isClient) {
     this.cssClass = cssClass;
   }
 
+  // playerObj.prototype.write = function(){
+  //   return console.log("I'm a prototype in the playerObj object");
+  // }
+
   /* *******************
    * Reactive and Page Events Bindings 
    * *******************/
@@ -46,6 +51,7 @@ if (Meteor.isClient) {
     return options.inverse(this);
   }
 
+  // Create Game
   Template.create.events({
     'click .create-game' : function () {
       var game = $('#game-name').val();
@@ -70,6 +76,8 @@ if (Meteor.isClient) {
     return Session.get("players");
   }
 
+
+  // Teams
   Template.teams.game_name = function() {
     return Session.get("game_name");
   }  
@@ -80,6 +88,24 @@ if (Meteor.isClient) {
 
   Template.teams.team = function() {
     return Session.get("teams");
+  }
+
+  // Results
+  Template.results.events({
+    'click .play-again' : function() { //Reset the drink count for the players but keep teams
+      var teams = Session.get("teams");
+
+      $.each(teams, function(i, team) {
+        $.each(team.teamMembers, function(j, player) {
+          player.numDrinks = 0;
+          // player.write();
+        });
+      });
+    }
+  });
+
+  Template.results.total_drinks = function() {
+    return Session.get("total_drinks");
   }
 
   /* Gaming Log - NOT USED */

@@ -36,7 +36,7 @@ if (Meteor.isClient) {
 	   ================================================================================*/
 	
 	// Navigation clicks
-	$('body').on('click', '.game-button, .back-button', function(){
+	$('body').on('click', '.nav-btn', function(){
 		Session.set('page', $(this).attr('id'));
 	});
 
@@ -136,7 +136,9 @@ if (Meteor.isClient) {
 		//Assign drinks to each player on the current team
 		$.each(teams[teamId].teamMembers, function(i, player) {
 			var maxDrinks = GetMaxDrinks(player.standing);
-			player.numDrinks = Math.ceil(Math.random()*maxDrinks);
+			var numDrinks = Math.ceil(Math.random()*maxDrinks);
+			player.numDrinks = numDrinks;
+			AddDrinksOverallTotal(numDrinks);
 		});
 
 		Session.set('teams', teams);
@@ -208,6 +210,12 @@ if (Meteor.isClient) {
 		}
 
 		return maxDrinks;
+	}
+
+	// Keep track of the number of drinks handed out to all users
+	function AddDrinksOverallTotal(numDrinks) {
+		var overallDrinks = Session.get("total_drinks");
+		Session.set("total_drinks", overallDrinks + numDrinks);
 	}
   });
 }
