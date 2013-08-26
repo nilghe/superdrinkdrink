@@ -96,11 +96,12 @@ if (Meteor.isClient) {
       var teams = Session.get("teams");
 
       $.each(teams, function(i, team) {
-        $.each(team.teamMembers, function(j, player) {
-          player.numDrinks = 0;
-          player.standing = 0;
-          player.standingText = "";
-          player.cssClass = "";
+          team.currentStanding = 1; 
+            $.each(team.teamMembers, function(j, player) {
+              player.numDrinks = 0;
+              player.standing = 0;
+              player.standingText = "";
+              player.cssClass = "";
         });
       });
 
