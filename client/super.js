@@ -5,14 +5,16 @@ if (Meteor.isClient) {
   /* *******************
    * Session Setup
    * *******************/
-  Session.set("page", 'main'); //Default page
-  Session.set("teams", []); //Teams Object Array
-  Session.set("players", []); //Player Object Array
-  
-  Session.set("game_name", null); //Name of the game the user set
-  Session.set("team_size", null); //Team sizes
-  Session.set("total_drinks", 0);
-  Session.set("player_id", 0); //ID of each individual player. Increments by 1
+  Meteor.startup(function () {
+    Session.setDefault("page", 'main'); //Default page
+    Session.setDefault("teams", []); //Teams Object Array
+    Session.setDefault("players", []); //Player Object Array
+    
+    Session.set("game_name", null); //Name of the game the user set
+    Session.set("team_size", null); //Team sizes
+    Session.set("total_drinks", 0);
+    Session.set("player_id", 0); //ID of each individual player. Increments by 1
+  });
 
   /* *******************
    * Objects
@@ -22,7 +24,10 @@ if (Meteor.isClient) {
 
   /* Player 
    * playerName - Name of the player
-   * numDrinks - Number of drinks for the player */
+   * numDrinks - Number of drinks for the player 
+   * standing - Where the player finished/placed 
+   * standingText - The text for their placement 
+   * cssClass - CSS Classes that are added to the user */
   function playerObj(id, playerName, numDrinks, standing, standingText, cssClass){
     this.id = id;
     this.playerName = playerName;
@@ -31,10 +36,6 @@ if (Meteor.isClient) {
     this.standingText = standingText;
     this.cssClass = cssClass;
   }
-
-  // playerObj.prototype.write = function(){
-  //   return console.log("I'm a prototype in the playerObj object");
-  // }
 
   /* *******************
    * Reactive and Page Events Bindings 
@@ -118,22 +119,6 @@ if (Meteor.isClient) {
   Template.results.total_drinks = function() {
     return Session.get("total_drinks");
   }
-
-  /* Gaming Log - NOT USED */
-  /* Template.game.playerlog = function(){
-    return Players.find();
-  } */
-
-  /* Total number of players globally */
-  /* Template.game.global_total = function(){
-    var players = Players.find();
-
-    var count = 0;
-    players.forEach(function (x) {
-      count += parseInt(x.num_of_players, 10);
-    });
-    return count;
-  } */
 }
 
 if (Meteor.isServer) {
