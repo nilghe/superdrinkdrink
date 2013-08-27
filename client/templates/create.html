@@ -1,23 +1,45 @@
 <template name="create">
 	<h1>Create a game</h1>
-	<br />
-	Game: <input type="text" id="game-name" /><br />
-	Team Size: 		
-	<select id="num-players">
-		<option value="2">2</option>
-		<option value="4">4</option>
-		<option value="6">6</option>
-		<option value="8">8</option>
-		<option value="10">10</option>
-	</select>
-	<br />
-	Players: <input type="text" id="player" /> <input type="button" id="add-player"value="add" />
+	<div class="form-group">
+		<label for="game-name" class="control-label col-lg-2">Game:</label>
+		<div class="col-lg-10"> 
+			<input type="text" class="form-control" id="game-name" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="num-players" class="control-label col-lg-2">Team Size:</label>
+		<div class="col-lg-10"> 
+			<select id="num-players" class="form-control">
+				<option value="2">2</option>
+				<option value="4">4</option>
+				<option value="6">6</option>
+				<option value="8">8</option>
+				<option value="10">10</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="player" class="control-label col-lg-2">Players:</label>
+		<div class="col-lg-10"> 
+			<input type="text" id="player" class="form-control" />
+			<button type="button" id="add-player" class="btn btn-primary">
+				<span class="glyphicon glyphicon-plus"></span> Add
+			</button> 
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Players</h3>
+		</div>
+		<div class="panel-body">
+			<ul class="players-list">
+				{{#each player}}
+					<li>{{playerName}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	</div>
 
-	<ul class="players-list">
-		{{#each player}}
-			<li>{{playerName}}</li>
-		{{/each}}
-	</ul>
-
-	<button class="nav-btn create-game" id="teams">Create Teams</button>
+	<button class="nav-btn create-game btn btn-success" id="teams">Create Teams</button>
 </template>
