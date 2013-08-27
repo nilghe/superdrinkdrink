@@ -46,7 +46,7 @@ if (Meteor.isClient) {
 	});
 
 	// Placing players from first to last. All information is stored in the Teams Object.
-	$('body').on('click', '.team-members li', function(){
+	$('body').on('click', '.team-members a', function(){
 		
 		var teamId = $(this).parents('.team').data('teamid');
 		var playerId = $(this).data('playerid');

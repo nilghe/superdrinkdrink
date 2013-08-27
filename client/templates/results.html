@@ -1,7 +1,11 @@
 <template name="results">
-	<h1>Your results</h1>
-	<h1>{{game_name}}</h1>
-	<h3>Total Drinks Given: {{total_drinks}}</h3>
-	<button class="nav-btn new-game" id="create">New Game!</button>
-	<button class="nav-btn play-again" id="teams">Play Again</button>
+<div class="container">
+	<div class="jumbotron">
+		<h1>Your results</h1>
+		<h1>{{game_name}}</h1>
+		<h3>Total Drinks Given: {{total_drinks}}</h3>
+	</div>
+	<button class="nav-btn new-game btn btn-success btn-lg" id="create">New Game!</button>
+	<button class="nav-btn play-again btn btn-primary btn-lg" id="teams">Play Again</button>
+</div>
 </template>
