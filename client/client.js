@@ -103,6 +103,14 @@ if (Meteor.isClient) {
 
 	});
 
+	// Prevent scroll to top of page from href="#" in the team members list when clicked
+	// http://stackoverflow.com/a/7012906/1052068
+	$('body').on('click', '.team-members a', function(ev){
+		ev.preventDefault();
+		ev.stopPropagation();
+		return false;
+	});
+
 	/* ================================================================================
    	   Game Functions
        ================================================================================*/

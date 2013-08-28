@@ -4,36 +4,42 @@
 		<h1>You're playing {{game_name}}</h1>
 		<h3>Team size: {{team_size}}</h3>
 	</div>
-
-	{{#each team}}
-	<div class="team panel panel-primary" data-teamid="{{teamName}}" data-currentstanding="{{currentStanding}}">
-		<div class="panel-heading">
-			<h3 class="panel-title">Team {{teamName}}</h3>
-		</div>
-		<div class="panel-body">
-			<div class="team-members list-group">
-				{{#each teamMembers}}
-				<a href="#" data-placed="{{standing}}" data-playerid="{{id}}" class="list-group-item {{cssClass}}">
-					{{playerName}}
-					{{#if standingText}}
-						<span class="standing-text label label-success">{{standingText}}</span>
-					{{/if}}
-					{{#if numDrinks}}
-						<span class="drinks badge">{{numDrinks}}</span>
-					{{/if}}
-				</a>
-				{{/each}}
+	<div class="row">
+		{{#each team}}
+		<div class="col-lg-6">
+			<div class="team panel panel-primary" data-teamid="{{teamName}}" data-currentstanding="{{currentStanding}}">
+				<div class="panel-heading">
+					<h3 class="panel-title">Team {{teamName}}</h3>
+				</div>
+				<div class="panel-body">
+					<div class="team-members list-group">
+						{{#each teamMembers}}
+						<a href="#" data-placed="{{standing}}" data-playerid="{{id}}" class="list-group-item {{cssClass}}">
+							{{playerName}}
+							{{#if standingText}}
+								<span class="standing-text label label-success">{{standingText}}</span>
+							{{/if}}
+							{{#if numDrinks}}
+								<span class="drinks badge">{{numDrinks}}</span>
+							{{/if}}
+						</a>
+						{{/each}}
+					</div>
+					<input type="button" class="give-drinks btn btn-default btn-lg" data-teamid="{{teamName}}" value="DRINK!" />
+				</div>
 			</div>
-			<input type="button" class="give-drinks btn btn-default btn-lg" data-teamid="{{teamName}}" value="DRINK!" />
+		{{/each}}
+	</div>
+
+	<div class="row">
+		<div class="col-lg-12">
+			<button class="nav-btn btn btn-primary btn-lg" id="create">
+				<span class="glyphicon glyphicon-chevron-left"></span> Back
+			</button>
+			<button class="nav-btn btn btn-success btn-lg" id="results">
+				<span class="glyphicon glyphicon-ok"></span> Finished!
+			</button>
 		</div>
 	</div>
-	{{/each}}
-
-	<button class="nav-btn btn btn-primary btn-lg" id="create">
-		<span class="glyphicon glyphicon-chevron-left"></span> Back
-	</button>
-	<button class="nav-btn btn btn-success btn-lg" id="results">
-		<span class="glyphicon glyphicon-ok"></span> Finished!
-	</button>
 </div>
 </template>
