@@ -60,11 +60,13 @@ if (Meteor.isClient) {
 
   // Create Game
   Template.create.events({
+    // When the user changes the number of players on a team aka team size
     'change #num-players' : function () {
       Session.set("team_size", $('#num-players').val());
       CheckIfEnoughPlayers();
     },
 
+    // Set the game name and team size. The game is created in the client.js file due to name spacing.
     'click .create-game' : function () {
       var game = $('#game-name').val();
       var players = $('#num-players').val();
@@ -72,6 +74,7 @@ if (Meteor.isClient) {
       Session.set("team_size", players);
     },
 
+    // Add a player to the list of players
     'click #add-player' : function () {
 
       // create player object
@@ -124,12 +127,14 @@ if (Meteor.isClient) {
   }
 
   /* ================================================================================
-   RESULTS HANDLEBARS TEMPLATE 
-   ================================================================================*/
+     RESULTS HANDLEBARS TEMPLATE 
+     ================================================================================*/
   Template.results.events({
-    'click .play-again' : function() { //Reset the drink count for the players but keep teams
+    // Allow the user to play again with the same teams
+    'click .play-again' : function() {
       var teams = Session.get("teams");
 
+      // reset all player stats
       $.each(teams, function(i, team) {
           team.currentStanding = 1; 
             $.each(team.teamMembers, function(j, player) {
@@ -144,6 +149,7 @@ if (Meteor.isClient) {
       Session.set("total_drinks", 0);
     },
 
+    // Start over completely
     'click .new-game' : function() { // Reset the game completely
       Session.set("teams", []);
       Session.set("players", []);

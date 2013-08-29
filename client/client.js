@@ -89,8 +89,23 @@ if (Meteor.isClient) {
 					Session.set('teams', teams);
 				}
 			});
+		}
 
+		if (currentStanding == Session.get("team_size")) {
+			var parent = $(this).parents('.team');
+			console.log(parent);
 
+			//var button = parent.find('.give-drinks');
+			var button = parent.closest('#drink-btn-' + teamId);
+			console.log(button);
+
+			button.prop("disabled", true);
+			button.addClass("pleasework");
+
+			$('#drink-btn-' + teamId).css('background-color', 'blue');
+			$(this).parents('.team').closest('.testing').css('background-color', 'blue');
+
+			$(this).parents('.team').find('input.give-drinks').addClass('testingtestingtesing');
 		}
 
 	});
