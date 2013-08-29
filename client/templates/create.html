@@ -54,7 +54,12 @@
 		</div>
 		</div>
 	</div>
-	<button class="nav-btn create-game btn btn-success" id="teams">Create Teams</button>
+		{{#if enough_players.enough_players}}
+		<button class="nav-btn create-game btn btn-success" id="teams">Create Teams</button>
+			{{else}}
+			<span><em>* You must have at least {{enough_players.team_size}} players to create your game.</em></span>
+		{{/if}}
+
 	{{/if}}
 </div>
 </template>
