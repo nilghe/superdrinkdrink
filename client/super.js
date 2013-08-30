@@ -6,16 +6,7 @@ if (Meteor.isClient) {
    * Session Setup
    * *******************/
   Meteor.startup(function () {
-    Session.setDefault("page", 'main'); //Default page
-    Session.setDefault("teams", []); //Teams Object Array
-    Session.setDefault("players", []); //Player Object Array
-    
-    Session.set("game_name", null); //Name of the game the user set
-    Session.set("team_size", 2); //Team sizes with a default of 2
-    Session.set("total_players", 0);
-    Session.set("enough_players", false);
-    Session.set("total_drinks", 0);
-    Session.set("player_id", 0); //ID of each individual player. Increments by 1
+    SetSessionVariables();
   });
 
   /* *******************
@@ -76,25 +67,14 @@ if (Meteor.isClient) {
 
     // Add a player to the list of players
     'click #add-player' : function () {
+      AddPlayer();
+    },
 
-      // create player object
-      var playerId = Session.get("player_id");
-      var singlePlayer = new playerObj(playerId, $('#player').val(), 0, 0, "", "");
-      
-      // Add the newest player to the list of players
-      var currentPlayers = Session.get("players");
-      currentPlayers.push(singlePlayer);
-      Session.set("players", currentPlayers);
-      
-      // increment for the next player ID
-      Session.set("player_id", playerId + 1);
-
-      // Keep track of how many players we have
-      var totalPlayers = Session.get("total_players");
-      Session.set("total_players", totalPlayers + 1);
-
-      // Check if there are enough players to create the game
-      CheckIfEnoughPlayers();
+    // Add player to the list of players when the user hits enter instead of the button
+    'keypress #player' : function (event) {
+      if (event.which === 13) {
+        AddPlayer();
+      }
     }
   });
 
@@ -122,9 +102,15 @@ if (Meteor.isClient) {
     return Session.get("team_size");
   }
 
+  Template.teams.first_team = function() {
+    return Session.get("teams")[0].teamName;
+  }
+
   Template.teams.team = function() {
     return Session.get("teams");
   }
+
+
 
   /* ================================================================================
      RESULTS HANDLEBARS TEMPLATE 
@@ -137,7 +123,11 @@ if (Meteor.isClient) {
       // reset all player stats
       $.each(teams, function(i, team) {
           team.currentStanding = 1;
-          team.disableDrinks = "";
+          team.disableDrinks = "disabled";
+          team.drank = false;
+          team.playersPlaced = 0;
+          team.btnMsg = "Rank your players first, then you can drink";
+          
             $.each(team.teamMembers, function(j, player) {
               player.numDrinks = 0;
               player.standing = 0;
@@ -152,8 +142,7 @@ if (Meteor.isClient) {
 
     // Start over completely
     'click .new-game' : function() { // Reset the game completely
-      Session.set("teams", []);
-      Session.set("players", []);
+      SetSessionVariables();
     }
   });
 
@@ -165,6 +154,21 @@ if (Meteor.isClient) {
   /* ================================================================================
      Helper Functions
      ================================================================================*/
+  
+  // Setup all the Session variables to be used globally
+  function SetSessionVariables() {
+    Session.set("page", 'main'); //Default page
+    Session.set("teams", []); //Teams Object Array
+    Session.set("players", []); //Player Object Array
+    
+    Session.set("game_name", null); //Name of the game the user set
+    Session.set("team_size", 2); //Team sizes with a default of 2
+    Session.set("total_players", 0);
+    Session.set("enough_players", false);
+    Session.set("total_drinks", 0);
+    Session.set("player_id", 0); //ID of each individual player. Increments by 1
+  }
+
   function CheckIfEnoughPlayers() {
 
       if (Session.get("total_players") >= Session.get("team_size")) {
@@ -173,6 +177,30 @@ if (Meteor.isClient) {
       else {
         Session.set("enough_players", false);
       }
+  }
+
+  // Add players to the current game
+  function AddPlayer() {
+      // create player object
+      var playerId = Session.get("player_id");
+      var singlePlayer = new playerObj(playerId, $('#player').val(), 0, 0, "", "");
+      
+      // Add the newest player to the list of players
+      var currentPlayers = Session.get("players");
+      currentPlayers.push(singlePlayer);
+      Session.set("players", currentPlayers);
+      
+      // increment for the next player ID
+      Session.set("player_id", playerId + 1);
+
+      // Keep track of how many players we have
+      var totalPlayers = Session.get("total_players");
+      Session.set("total_players", totalPlayers + 1);
+
+      // Check if there are enough players to create the game
+      CheckIfEnoughPlayers();
+
+      $('#player').val('');
   }
 
 if (Meteor.isServer) {

@@ -10,12 +10,17 @@ if (Meteor.isClient) {
 	/* Teams 
 	* teamMembers - Array of the members
 	* teamName - Well ... this is straight forward 
-	* currentStanding - The current standing to be assigned to a player */
+	* currentStanding - The current standing to be assigned to a player 
+	* disableDrinks - Disables the drink button
+	* drank - bool that says if the team was given drinks already */
 	function teamObj(teamMembers, teamName, currentStanding){
 		this.teamMembers = teamMembers;
 		this.teamName = teamName;
 		this.currentStanding = currentStanding;
+		this.playersPlaced = 0;
 		this.disableDrinks = "disabled";
+		this.drank = false;
+		this.btnMsg = "Rank your players first, then you can drink";
 	}
 
 	// Conversion array to convert the standing from a number to a word 
@@ -55,7 +60,9 @@ if (Meteor.isClient) {
 		var teams = Session.get('teams'); //Create copy of current team list
 		var currentStanding = teams[teamId].currentStanding;
 		var playerStanding = $(this).data('placed');
-		
+
+		// If the team already drank don't allow them to rearrange player ranking
+		if (teams[teamId].drank) { return; } 
 
 		/* Player standings can be toggled
 		 * If they've been placed (have class .placed), remove their placing, reset their placement, 
@@ -73,6 +80,8 @@ if (Meteor.isClient) {
 					player.standing = 0;
 					player.standingText = "";
 					teams[teamId].currentStanding = currentStanding - 1;
+					teams[teamId].disableDrinks = "disabled"; // disable the drink button
+					teams[teamId].playersPlaced--;
 
 					Session.set('teams', teams);
 				}
@@ -86,6 +95,7 @@ if (Meteor.isClient) {
 					player.standing = currentStanding;
 					player.standingText = standings[currentStanding - 1];
 					teams[teamId].currentStanding = currentStanding + 1;
+					teams[teamId].playersPlaced++;
 
 					Session.set('teams', teams);
 				}
@@ -94,13 +104,8 @@ if (Meteor.isClient) {
 
 		// Only enable the drink button once all players are placed
 		var teams = Session.get('teams');
-		if (currentStanding == Session.get("team_size")) {
+		if (teams[teamId].playersPlaced == Session.get("team_size")) {
 			teams[teamId].disableDrinks = "";
-			Session.set('teams', teams);
-		}
-		// If the user started rearranging ranks then disable the button again
-		else {
-			teams[teamId].disableDrinks = "disabled";
 			Session.set('teams', teams);
 		}
 
@@ -151,6 +156,9 @@ if (Meteor.isClient) {
 	// The better they do, the more drinks they get. Why? Cause DRINK!
 	function GenerateDrinks(teamId) {
 		var teams = Session.get('teams');
+		teams[teamId].disableDrinks = "disabled"; // They can only click this once
+		teams[teamId].drank = true;
+		teams[teamId].btnMsg = "Can only distribute drinks once, don't want to get anyone drunk here";
 
 		//Assign drinks to each player on the current team
 		$.each(teams[teamId].teamMembers, function(i, player) {
