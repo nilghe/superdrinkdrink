@@ -136,7 +136,8 @@ if (Meteor.isClient) {
 
       // reset all player stats
       $.each(teams, function(i, team) {
-          team.currentStanding = 1; 
+          team.currentStanding = 1;
+          team.disableDrinks = "";
             $.each(team.teamMembers, function(j, player) {
               player.numDrinks = 0;
               player.standing = 0;

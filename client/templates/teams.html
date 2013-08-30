@@ -28,7 +28,10 @@
 						</a>
 						{{/each}}
 					</div>
-					<input type="button" id="drink-btn-{{teamName}}" class="give-drinks btn btn-default btn-lg" data-teamid="{{teamName}}" value="DRINK!" />
+					<input type="button" class="give-drinks btn btn-default btn-lg" data-teamid="{{teamName}}" value="DRINK!" {{disableDrinks}} />
+					{{#if disableDrinks}}
+						<span>Rank the players first, don't want to get too drunk.</span>
+					{{/if}}
 				</div>
 			</div>
 		{{/each}}

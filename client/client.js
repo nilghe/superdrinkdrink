@@ -8,13 +8,14 @@ if (Meteor.isClient) {
 	 * ********************/
 
 	/* Teams 
-	* playerName - Name of the player
-	* numDrinks - Number of drinks for the player 
+	* teamMembers - Array of the members
+	* teamName - Well ... this is straight forward 
 	* currentStanding - The current standing to be assigned to a player */
 	function teamObj(teamMembers, teamName, currentStanding){
 		this.teamMembers = teamMembers;
 		this.teamName = teamName;
 		this.currentStanding = currentStanding;
+		this.disableDrinks = "disabled";
 	}
 
 	// Conversion array to convert the standing from a number to a word 
@@ -91,21 +92,16 @@ if (Meteor.isClient) {
 			});
 		}
 
+		// Only enable the drink button once all players are placed
+		var teams = Session.get('teams');
 		if (currentStanding == Session.get("team_size")) {
-			var parent = $(this).parents('.team');
-			console.log(parent);
-
-			//var button = parent.find('.give-drinks');
-			var button = parent.closest('#drink-btn-' + teamId);
-			console.log(button);
-
-			button.prop("disabled", true);
-			button.addClass("pleasework");
-
-			$('#drink-btn-' + teamId).css('background-color', 'blue');
-			$(this).parents('.team').closest('.testing').css('background-color', 'blue');
-
-			$(this).parents('.team').find('input.give-drinks').addClass('testingtestingtesing');
+			teams[teamId].disableDrinks = "";
+			Session.set('teams', teams);
+		}
+		// If the user started rearranging ranks then disable the button again
+		else {
+			teams[teamId].disableDrinks = "disabled";
+			Session.set('teams', teams);
 		}
 
 	});
