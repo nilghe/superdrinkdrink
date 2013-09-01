@@ -41,6 +41,11 @@ if (Meteor.isClient) {
 	   Dynamic Element Event Binding
 	   ================================================================================*/
 	
+	// Bonus Drink Modal
+	$('#bonusModal').modal({
+		show: false
+	});
+
 	// Navigation clicks
 	$('body').on('click', '.nav-btn', function(){
 		Session.set('page', $(this).attr('id'));
@@ -116,7 +121,12 @@ if (Meteor.isClient) {
 
 		var teamId = $(this).data('teamid');
 		GenerateDrinks(teamId);
+		BonusDrinks();
+	});
 
+	// Give a chance for bonus drinks when the game is finished
+	$('body').on('click', '.game-finished', function(){
+		BonusDrinks();
 	});
 
 	// Prevent scroll to top of page from href="#" in the team members list when clicked
@@ -158,7 +168,7 @@ if (Meteor.isClient) {
 		var teams = Session.get('teams');
 		teams[teamId].disableDrinks = "disabled"; // They can only click this once
 		teams[teamId].drank = true;
-		teams[teamId].btnMsg = "Can only distribute drinks once, don't want to get anyone drunk here";
+		teams[teamId].btnMsg = "This team drank already, calm down";
 
 		//Assign drinks to each player on the current team
 		$.each(teams[teamId].teamMembers, function(i, player) {
@@ -169,6 +179,19 @@ if (Meteor.isClient) {
 		});
 
 		Session.set('teams', teams);
+	}
+
+	// Give the chance of random bonus drinks to the players
+	function BonusDrinks() {
+		var chance = Math.random();
+
+		// 30% chance of bonus drank
+		if (chance < 0.3) {
+			var drinks = Math.ceil(Math.random()*2);
+			Session.set("bonus_drinks", drinks);
+			console.log('Bonus drinks given: ' + drinks);
+			$('#bonusModal').modal('show');
+		}
 	}
 
 	/* ================================================================================

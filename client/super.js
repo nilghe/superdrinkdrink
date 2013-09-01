@@ -92,8 +92,8 @@ if (Meteor.isClient) {
   }
 
   /* ================================================================================
-   TEAM & GAME HANDLEBARS TEMPLATE 
-   ================================================================================*/
+     TEAM & GAME HANDLEBARS TEMPLATE 
+     ================================================================================*/
   Template.teams.game_name = function() {
     return Session.get("game_name");
   }  
@@ -110,7 +110,12 @@ if (Meteor.isClient) {
     return Session.get("teams");
   }
 
-
+  /* ================================================================================
+     BONUS HANDLEBARS TEMPLATE 
+     ================================================================================*/
+  Template.bonus.bonus_drinks = function() {
+    return Session.get("bonus_drinks");
+  }
 
   /* ================================================================================
      RESULTS HANDLEBARS TEMPLATE 
