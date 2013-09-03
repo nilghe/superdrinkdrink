@@ -81,7 +81,7 @@ if (Meteor.isClient) {
 
 			$.each(teams[teamId].teamMembers, function(i, player){
 				if (player.id == playerId) {
-					player.cssClass = '';
+					player.placed = '';
 					player.standing = 0;
 					player.standingText = "";
 					teams[teamId].currentStanding = currentStanding - 1;
@@ -96,7 +96,7 @@ if (Meteor.isClient) {
 
 			$.each(teams[teamId].teamMembers, function(i, player){
 				if (player.id == playerId) {
-					player.cssClass = 'placed';
+					player.placed = 'placed';
 					player.standing = currentStanding;
 					player.standingText = standings[currentStanding - 1];
 					teams[teamId].currentStanding = currentStanding + 1;

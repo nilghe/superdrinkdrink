@@ -1,3 +1,11 @@
-.placed {
-	
+/* Colored Badges for ranking players */
+.standing-text.placed-1 {
+	background-color: #FFD700;
 }
+.standing-text.placed-2 {
+	background-color: #C0C0C0;
+}
+.standing-text.placed-3 {
+	background-color: #8c7853;
+}
+

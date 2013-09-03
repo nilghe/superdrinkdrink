@@ -20,10 +20,10 @@
 				<div class="panel-body">
 					<div class="team-members list-group">
 						{{#each teamMembers}}
-						<a href="#" data-placed="{{standing}}" data-playerid="{{id}}" class="list-group-item {{cssClass}}">
+						<a href="#" data-placed="{{standing}}" data-playerid="{{id}}" class="list-group-item {{placed}}">
 							{{playerName}}
 							{{#if standingText}}
-								<span class="standing-text label label-success">{{standingText}}</span>
+								<span class="standing-text label label-success placed-{{standing}}">{{standingText}}</span>
 							{{/if}}
 							{{#if numDrinks}}
 								<span class="drinks badge">{{numDrinks}}</span>

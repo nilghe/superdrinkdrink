@@ -20,14 +20,14 @@ if (Meteor.isClient) {
    * numDrinks - Number of drinks for the player 
    * standing - Where the player finished/placed 
    * standingText - The text for their placement 
-   * cssClass - CSS Classes that are added to the user */
-  function playerObj(id, playerName, numDrinks, standing, standingText, cssClass){
+   * placed - CSS Classes that are added to the user */
+  function playerObj(id, playerName, numDrinks, standing, standingText, placed){
     this.id = id;
     this.playerName = playerName;
     this.numDrinks = numDrinks;
     this.standing = standing;
     this.standingText = standingText;
-    this.cssClass = cssClass;
+    this.placed = placed;
   }
 
   /* *******************
@@ -113,6 +113,10 @@ if (Meteor.isClient) {
   /* ================================================================================
      BONUS HANDLEBARS TEMPLATE 
      ================================================================================*/
+  // preserve the state of the modal to it's not over written
+  // http://stackoverflow.com/a/16377525/1052068
+  Template.bonus.preserve(['#bonusModal']); 
+  
   Template.bonus.bonus_drinks = function() {
     return Session.get("bonus_drinks");
   }
@@ -137,7 +141,7 @@ if (Meteor.isClient) {
               player.numDrinks = 0;
               player.standing = 0;
               player.standingText = "";
-              player.cssClass = "";
+              player.placed = "";
         });
       });
 
