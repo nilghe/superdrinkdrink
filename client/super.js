@@ -75,6 +75,11 @@ if (Meteor.isClient) {
       if (event.which === 13) {
         AddPlayer();
       }
+    },
+
+    // Remove Player
+    'click .remove-player' : function() {
+      RemovePlayer(this.id);
     }
   });
 
@@ -210,6 +215,18 @@ if (Meteor.isClient) {
       CheckIfEnoughPlayers();
 
       $('#player').val('');
+  }
+
+  // Remove a player from the list
+  function RemovePlayer(id) {
+
+    // using grep will return a new array of objects without the removed player
+    // http://api.jquery.com/jQuery.grep/
+    var remainingPlayers = $.grep(Session.get("players"), function(e){
+      return e.id != id;
+    });
+
+    Session.set("players", remainingPlayers); 
   }
 
 if (Meteor.isServer) {
