@@ -80,6 +80,7 @@ if (Meteor.isClient) {
     // Remove Player
     'click .remove-player' : function() {
       RemovePlayer(this.id);
+      CheckIfEnoughPlayers();
     }
   });
 
@@ -195,6 +196,10 @@ if (Meteor.isClient) {
 
   // Add players to the current game
   function AddPlayer() {
+
+      // Do not allow empty strings
+      if (!($('#player').val())) { return; }
+
       // create player object
       var playerId = Session.get("player_id");
       var singlePlayer = new playerObj(playerId, $('#player').val(), 0, 0, "", "");
@@ -207,7 +212,7 @@ if (Meteor.isClient) {
       // increment for the next player ID
       Session.set("player_id", playerId + 1);
 
-      // Keep track of how many players we have
+      // Keep track of how many players we have by adding 1
       var totalPlayers = Session.get("total_players");
       Session.set("total_players", totalPlayers + 1);
 
@@ -225,6 +230,10 @@ if (Meteor.isClient) {
     var remainingPlayers = $.grep(Session.get("players"), function(e){
       return e.id != id;
     });
+
+    // Keep track of how many players we have by subtracting 1
+    var totalPlayers = Session.get("total_players");
+    Session.set("total_players", totalPlayers - 1);
 
     Session.set("players", remainingPlayers); 
   }

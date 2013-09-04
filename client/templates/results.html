@@ -1,11 +1,15 @@
 <template name="results">
-<div class="container">
-	<div class="jumbotron">
+<div class="jumbotron">
+	<div class="container">
 		<h1>Your results</h1>
 		<h1>{{game_name}}</h1>
 		<h3>Total Drinks Given: {{total_drinks}}</h3>
 	</div>
+</div>
+<div class="container">
 	<button class="nav-btn new-game btn btn-success btn-lg" id="create">New Game!</button>
-	<button class="nav-btn play-again btn btn-primary btn-lg" id="teams">Play Again</button>
+	<button class="nav-btn play-again btn btn-primary btn-lg" id="teams">
+		<span class="glyphicon glyphicon-refresh"></span> Play Again
+	</button>
 </div>
 </template>
