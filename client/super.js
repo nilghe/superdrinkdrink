@@ -135,7 +135,7 @@ if (Meteor.isClient) {
     'click .play-again' : function() {
       var teams = Session.get("teams");
 
-      // reset all player stats
+      // reset all player stats in the teams
       $.each(teams, function(i, team) {
           team.currentStanding = 1;
           team.disableDrinks = "disabled";
@@ -151,7 +151,15 @@ if (Meteor.isClient) {
         });
       });
 
+      // reset all player stats overall
+      var players = Session.get("players");
+
+      $.each(players, function(i, player) {
+        player.numDrinks = 0;
+      });
+
       Session.set("teams", teams);
+      Session.set("players", players);
       Session.set("total_drinks", 0);
     },
 
@@ -161,16 +169,14 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.results.total_drinks = function() {
-    return Session.get("total_drinks");
-  }
-
-  Template.results.most_drunk_team = function() {
-    return Session.get("mostDrunkTeamName");
-  }
-
-  Template.results.most_drunk_team_drinks = function() {
-    return Session.get("mostdrunkTeamDrinks");
+  Template.results.game_stats = function() {
+    return {
+      total_drinks: Session.get("total_drinks"),
+      most_drunk_team: Session.get("mostDrunkTeamName"),
+      most_drunk_team_drinks: Session.get("mostdrunkTeamDrinks"),
+      player_most_drinks: Session.get("playerMostDrinks"),
+      player_total_drinks: Session.get("playerTotalDrinks")
+    };
   }
 }
 
@@ -182,7 +188,7 @@ if (Meteor.isClient) {
   function SetSessionVariables() {
     Session.set("page", 'main'); //Default page
     Session.set("teams", []); //Teams Object Array
-    Session.set("players", []); //Player Object Array
+    Session.set("players", []); //Global Player Object Array
     
     Session.set("game_name", null); //Name of the game the user set
     Session.set("team_size", 2); //Team sizes with a default of 2

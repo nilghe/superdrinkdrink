@@ -3,8 +3,9 @@
 	<div class="container">
 		<h1>Your results</h1>
 		<h1>{{game_name}}</h1>
-		<h3>Total Drinks Given: {{total_drinks}}</h3>
-		<h3>Most Drunk Team: Team {{most_drunk_team}} with {{most_drunk_team_drinks}} drinks</h3>
+		<h3>Total Drinks Given: {{game_stats.total_drinks}}</h3>
+		<h3>Most Drunk Team: Team {{game_stats.most_drunk_team}} with {{game_stats.most_drunk_team_drinks}} drinks</h3>
+		<h3>Player who drank the most: {{game_stats.player_most_drinks}} with {{game_stats.player_total_drinks}} drinks</h3>		
 	</div>
 </div>
 <div class="container">

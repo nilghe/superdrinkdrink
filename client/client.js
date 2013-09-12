@@ -131,6 +131,7 @@ if (Meteor.isClient) {
 	$('body').on('click', '.game-finished', function(){
 		BonusDrinks();
 		TeamDrankMost();
+		WhoDrankMost();
 	});
 
 	// Prevent scroll to top of page from href="#" in the team members list when clicked
@@ -182,6 +183,7 @@ if (Meteor.isClient) {
 			player.numDrinks = numDrinks;
 			teamDrinks += numDrinks; //track num of drinks for the team
 			AddDrinksOverallTotal(numDrinks);
+			AddToPlayerOverallDrinks(player.id, numDrinks);
 		});
 
 		teams[teamId].totalDrinks = teamDrinks;
@@ -274,6 +276,19 @@ if (Meteor.isClient) {
 		Session.set("total_drinks", overallDrinks + numDrinks);
 	}
 
+	// Add the total number of drinks for the player in the global players array
+	function AddToPlayerOverallDrinks(id, numDrinks) {
+		var players = Session.get("players");
+
+		$.each(players, function(i, player) {
+			if (player.id === id){
+				player.numDrinks += numDrinks;
+			}
+		});
+
+		Session.set("players", players);
+	}
+
 	// Which team drank the most?
 	function TeamDrankMost() {
 		var drunkTeams = Session.get("teams");
@@ -289,9 +304,18 @@ if (Meteor.isClient) {
 		});
 	}
 
-	// Which player drank the most?
+	// Who is the most tipsy?
 	function WhoDrankMost() {
-		
+		var players = Session.get("players");
+		var mostDrinks = 0;
+
+		$.each(players, function(i, player){
+			if (player.numDrinks > mostDrinks) {
+				mostDrinks = player.numDrinks;
+				Session.set("playerMostDrinks", player.playerName);
+				Session.set("playerTotalDrinks", player.numDrinks);
+			}
+		});
 	}
   });
 }
