@@ -30,9 +30,9 @@ if (Meteor.isClient) {
     this.placed = placed;
   }
 
-  /* *******************
-   * Reactive and Page Events Bindings 
-   * *******************/
+  /* ***********************************
+   * Reactive and Page Events Bindings *
+   * ***********************************/
 
   /* Determine which 'page' to display to the user */
   Template.body.page_is = function(data, options) {
@@ -163,6 +163,14 @@ if (Meteor.isClient) {
 
   Template.results.total_drinks = function() {
     return Session.get("total_drinks");
+  }
+
+  Template.results.most_drunk_team = function() {
+    return Session.get("mostDrunkTeamName");
+  }
+
+  Template.results.most_drunk_team_drinks = function() {
+    return Session.get("mostdrunkTeamDrinks");
   }
 }
 

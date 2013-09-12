@@ -10,13 +10,16 @@ if (Meteor.isClient) {
 	/* Teams 
 	* teamMembers - Array of the members
 	* teamName - Well ... this is straight forward 
-	* currentStanding - The current standing to be assigned to a player 
+	* currentStanding - The current standing to be assigned to a player
+	* totalDrinks - Total number of drinks for the entire team 
 	* disableDrinks - Disables the drink button
-	* drank - bool that says if the team was given drinks already */
+	* drank - bool that says if the team was given drinks already 
+	* btnMsg - Message that is displayed for the button for drinking */
 	function teamObj(teamMembers, teamName, currentStanding){
 		this.teamMembers = teamMembers;
 		this.teamName = teamName;
 		this.currentStanding = currentStanding;
+		this.totalDrinks = 0;
 		this.playersPlaced = 0;
 		this.disableDrinks = "disabled";
 		this.drank = false;
@@ -116,7 +119,7 @@ if (Meteor.isClient) {
 
 	});
 
-	// Pass out drinks to players in the current game
+	// Pass out drinks to players in the current team
 	$('body').on('click', '.give-drinks', function(){
 
 		var teamId = $(this).data('teamid');
@@ -127,6 +130,7 @@ if (Meteor.isClient) {
 	// Give a chance for bonus drinks when the game is finished
 	$('body').on('click', '.game-finished', function(){
 		BonusDrinks();
+		TeamDrankMost();
 	});
 
 	// Prevent scroll to top of page from href="#" in the team members list when clicked
@@ -165,6 +169,7 @@ if (Meteor.isClient) {
 	// Generate drinks to hand out to the players
 	// The better they do, the more drinks they get. Why? Cause DRINK!
 	function GenerateDrinks(teamId) {
+		var teamDrinks = 0;
 		var teams = Session.get('teams');
 		teams[teamId].disableDrinks = "disabled"; // They can only click this once
 		teams[teamId].drank = true;
@@ -175,9 +180,11 @@ if (Meteor.isClient) {
 			var maxDrinks = GetMaxDrinks(player.standing);
 			var numDrinks = Math.ceil(Math.random()*maxDrinks);
 			player.numDrinks = numDrinks;
+			teamDrinks += numDrinks; //track num of drinks for the team
 			AddDrinksOverallTotal(numDrinks);
 		});
 
+		teams[teamId].totalDrinks = teamDrinks;
 		Session.set('teams', teams);
 	}
 
@@ -189,7 +196,6 @@ if (Meteor.isClient) {
 		if (chance < 0.3) {
 			var drinks = Math.ceil(Math.random()*2);
 			Session.set("bonus_drinks", drinks);
-			console.log('Bonus drinks given: ' + drinks);
 			$('#bonusModal').modal('show');
 		}
 	}
@@ -266,6 +272,26 @@ if (Meteor.isClient) {
 	function AddDrinksOverallTotal(numDrinks) {
 		var overallDrinks = Session.get("total_drinks");
 		Session.set("total_drinks", overallDrinks + numDrinks);
+	}
+
+	// Which team drank the most?
+	function TeamDrankMost() {
+		var drunkTeams = Session.get("teams");
+		var mostDrinks = 0;
+
+		$.each(drunkTeams, function(i, team){
+			if (team.totalDrinks > mostDrinks) {
+				mostDrinks = team.totalDrinks;
+				Session.set("mostDrunkTeamName", team.teamName);
+				Session.set("mostdrunkTeamDrinks", team.totalDrinks);
+			}
+
+		});
+	}
+
+	// Which player drank the most?
+	function WhoDrankMost() {
+		
 	}
   });
 }
