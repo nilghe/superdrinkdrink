@@ -108,10 +108,6 @@ if (Meteor.isClient) {
     return Session.get("team_size");
   }
 
-  Template.teams.first_team = function() {
-    return Session.get("teams")[0].teamName;
-  }
-
   Template.teams.team = function() {
     return Session.get("teams");
   }

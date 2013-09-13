@@ -41,6 +41,11 @@
 					</div>
 				</div>
 			</form>
+			{{#if enough_players.enough_players}}
+				<button class="nav-btn create-game btn btn-success btn-lg" id="teams">Create Teams</button>
+			{{else}}
+				<span><em>* You must have at least {{enough_players.team_size}} players to create your game.</em></span>
+			{{/if}}
 		</div>
 		<div class="col-lg-6">
 			<div class="panel panel-default">
@@ -54,16 +59,11 @@
 							<li class="list-group-item">{{playerName}}<button type="button" class="close remove-player" title="Remove player because they don't like to have fun">&times;</button></li>
 						{{/each}}
 					</ul>
-					{{else}} There are no players yet :(
+						{{else}} 
+						There are no players yet :(
 					{{/if}}
 				</div>
-			</div>
-			{{#if enough_players.enough_players}}
-				<button class="nav-btn create-game btn btn-success btn-lg" id="teams">Create Teams</button>
-					{{else}}
-					<span><em>* You must have at least {{enough_players.team_size}} players to create your game.</em></span>
-			{{/if}}
-			
+			</div>			
 		</div>
 	</div>
 </div>
