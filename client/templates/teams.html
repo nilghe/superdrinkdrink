@@ -14,7 +14,7 @@
 	<div class="row">
 		{{#each team}}
 		<div class="col-lg-6">
-			<div class="team panel panel-primary" data-teamid="{{teamName}}" data-currentstanding="{{currentStanding}}">
+			<div class="team panel panel-primary" data-teamid="{{teamId}}" data-currentstanding="{{currentStanding}}">
 				<div class="panel-heading">
 					<h3 class="panel-title">Team {{teamName}}</h3>
 				</div>
@@ -33,10 +33,7 @@
 						{{/each}}
 					</div>
 					{{!-- Drink button is disabled if the user has not ranked players --}}
-					<input type="button" class="give-drinks btn btn-default btn-lg" data-teamid="{{teamName}}" value="DRINK!" {{disableDrinks}} />
-					{{#if disableDrinks}}
-						<span>{{btnMsg}}</span>
-					{{/if}}
+					<input type="button" class="give-drinks btn btn-default btn-lg" data-teamid="{{teamId}}" value="DRINK!" {{disableDrinks}} />
 				</div>
 			</div>
 		{{/each}}

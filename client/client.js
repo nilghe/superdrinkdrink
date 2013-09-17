@@ -8,22 +8,23 @@ if (Meteor.isClient) {
 	 * ********************/
 
 	/* Teams 
+	* teamId - id of the team
 	* teamMembers - Array of the members
 	* teamName - Well ... this is straight forward 
 	* currentStanding - The current standing to be assigned to a player
 	* totalDrinks - Total number of drinks for the entire team 
+	* playersPlaced - Number of players who have been placed
 	* disableDrinks - Disables the drink button
-	* drank - bool that says if the team was given drinks already 
-	* btnMsg - Message that is displayed for the button for drinking */
-	function teamObj(teamMembers, teamName, currentStanding){
+	* drank - bool that says if the team was given drinks already */
+	function teamObj(id, teamMembers, teamName, currentStanding){
+		this.teamId = id;
 		this.teamMembers = teamMembers;
 		this.teamName = teamName;
 		this.currentStanding = currentStanding;
 		this.totalDrinks = 0;
 		this.playersPlaced = 0;
-		this.disableDrinks = "disabled";
+		this.disableDrinks = "";
 		this.drank = false;
-		this.btnMsg = "Rank your players first, then you can drink";
 	}
 
 	// Conversion array to convert the standing from a number to a word 
@@ -70,6 +71,7 @@ if (Meteor.isClient) {
 		var playerStanding = $(this).data('placed');
 
 		// If the team already drank don't allow them to rearrange player ranking
+
 		if (teams[teamId].drank) { return; } 
 
 		/* Player standings can be toggled
@@ -88,7 +90,6 @@ if (Meteor.isClient) {
 					player.standing = 0;
 					player.standingText = "";
 					teams[teamId].currentStanding = currentStanding - 1;
-					teams[teamId].disableDrinks = "disabled"; // disable the drink button
 					teams[teamId].playersPlaced--;
 
 					Session.set('teams', teams);
@@ -96,6 +97,9 @@ if (Meteor.isClient) {
 			});
 		}
 		else if (!($(this).hasClass('placed'))) { //Not yet placed
+
+			// Do not allow players to be placed after 10th place
+			if (teams[teamId].playersPlaced == 10) { return; }
 
 			$.each(teams[teamId].teamMembers, function(i, player){
 				if (player.id == playerId) {
@@ -108,13 +112,6 @@ if (Meteor.isClient) {
 					Session.set('teams', teams);
 				}
 			});
-		}
-
-		// Only enable the drink button once all players are placed
-		var teams = Session.get('teams');
-		if (teams[teamId].playersPlaced == Session.get("team_size")) {
-			teams[teamId].disableDrinks = "";
-			Session.set('teams', teams);
 		}
 
 	});
@@ -151,37 +148,57 @@ if (Meteor.isClient) {
 		var players = Session.get("players");
 		var teamSize = Session.get("team_size");
 		var numOfPlayers = _.size(players);
-		var numOfTeams = Math.ceil(numOfPlayers/teamSize);
+		var numOfTeams = (teamSize==10) ? 1 : Math.ceil(numOfPlayers/teamSize);
 
 		players = randomizeArray(players); //randomize players array
-		players = EvenOutTeams(numOfPlayers, teamSize, players); //Even out the teams
 
-		//Create the teams
-		var allTeams = Session.get("teams");
-		for (var i=0; i < numOfTeams; i++) {
-			var teamMembers = players.splice(0,teamSize);
-			var teamName = i;
-			allTeams.push(new teamObj(teamMembers, teamName, 1));
+		// If use selected 10+ players then create one team 
+		// Otherwise even out the teams and create them
+		var teams;
+		if (numOfTeams == 1) {
+			teams = CreateOneTeam(players);
+		}
+		else {
+			players = EvenOutTeams(numOfPlayers, teamSize, players); //Even out the teams
+			teams = CreateMultipleTeams(players, numOfTeams, teamSize);
 		}
 
-		Session.set("teams", allTeams);
+		Session.set("teams", teams);
+	}
+
+	// Create a single team
+	function CreateOneTeam(players) {
+		var team = [];
+		team.push(new teamObj(0, players, "Singular", 1));
+		return team;
+	}
+
+	// Create multiple teams
+	function CreateMultipleTeams(players, numOfTeams, teamSize) {
+		var teams = [];
+		for (var i=0; i < numOfTeams; i++) {
+			var teamMembers = players.splice(0,teamSize);
+			var teamName = i; 
+			var teamId = i;
+			teams.push(new teamObj(teamId, teamMembers, teamName, 1));
+		}
+		return teams;
 	}
 
 	// Generate drinks to hand out to the players
-	// The better they do, the more drinks they get. Why? Cause DRINK!
+	// The better they do, the more drinks they get
 	function GenerateDrinks(teamId) {
 		var teamDrinks = 0;
 		var teams = Session.get('teams');
 		teams[teamId].disableDrinks = "disabled"; // They can only click this once
 		teams[teamId].drank = true;
-		teams[teamId].btnMsg = "This team drank already, calm down";
 
-		//Assign drinks to each player on the current team
+		// Assign drinks to each player on the current team
 		$.each(teams[teamId].teamMembers, function(i, player) {
 			var maxDrinks = GetMaxDrinks(player.standing);
 			var numDrinks = Math.ceil(Math.random()*maxDrinks);
 			player.numDrinks = numDrinks;
-			teamDrinks += numDrinks; //track num of drinks for the team
+			teamDrinks += numDrinks; // track num of drinks for the team
 			AddDrinksOverallTotal(numDrinks);
 			AddToPlayerOverallDrinks(player.id, numDrinks);
 		});
@@ -222,21 +239,20 @@ if (Meteor.isClient) {
 
 	/* Pad the players array with extra players if needed
 	 * This is to ensure the teams are all even
-	 * Some players will be playing twice, thus getting more drunk than others
-	 * Fun! */
+	 * Some players will be playing twice, thus getting more drunk than others */
 	function EvenOutTeams(numPlayers, teamSize, playersArray) {
 		
-		/* If number of players is not divible by team size choose players 
-		 * then fill the array with duplicate players until even team sizes */
+		// If number of players is not divible by team size choose players 
+		// then fill the array with duplicate players until even team sizes
 		var teamEven = (numPlayers%teamSize);
 		if (teamEven != 0) {
 			var additionalPlayers = [];
 
-			//figure out how many addition players we need
+			// figure out how many addition players we need
 			var playersNeeded = (teamSize - teamEven);
 
 			for (var i=0; i < playersNeeded; i++) {
-				additionalPlayers.push(playersArray[i]); //array is already randomized
+				additionalPlayers.push(playersArray[i]); // array is already randomized
 			}
 
 			playersArray.push.apply(playersArray, additionalPlayers);
@@ -254,16 +270,16 @@ if (Meteor.isClient) {
 		var maxDrinks = 0;
 
 		switch(standing) {
-			case 1: //1st
+			case 1: // 1st
 				maxDrinks = 5;
 				break;
-			case 2: //2nd
+			case 2: // 2nd
 				maxDrinks = 4;
 				break;
-			case 3: //3rd
+			case 3: // 3rd
 				maxDrinks = 3;
 				break;
-			default: //All other places
+			default: // All other places
 				maxDrinks = 2;
 		}
 
