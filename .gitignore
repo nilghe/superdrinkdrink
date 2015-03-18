@@ -213,3 +213,9 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+### Meteor ###
+.meteor/local
+.meteor/meteorite
+
+.DS_Store
